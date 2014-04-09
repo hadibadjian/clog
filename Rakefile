@@ -1,25 +1,71 @@
-desc "Some task"
+require 'find'
+require 'fileutils'
+require 'colorize'
 
+desc "Some task"
 task :clog, [:workspace] do |t, args|
-  args.with_defaults(:workspace => "./*", :repeat => 1)
-  puts args[:workspace]
+  args.with_defaults(:workspace => "#{ENV['WORKSPACE']}", :repeat => 1)
 
   controller_dir = args[:workspace]
-  files = FileList.new("#{controller_dir}") do |file|
-    
-    # puts "#{user_commits}/#{total_file_lines}"
+
+  report_path = "#{controller_dir}/index.html"
+  
+  print "start--".yellow
+
+  # creaing an html file
+  begin
+    file = File.open(report_path, "w")
+    file.write("<html><head></head><body><table>") 
+  rescue IOError => e
+    #some error occur, dir not writable etc.
+  ensure
+    file.close unless file == nil
   end
 
-  files.each { |file| 
-    puts "#{file}"
-    total_file_lines = `wc -l #{file} | awk '{print $1}'`
-    user_commits = `git blame #{file} | grep -cow \"Hadi\"`
+  # getting list of committers
+  committers = `git log --raw | grep "^Author:" | sort | uniq | sed -e 's/^Author: //g' -e 's/<.*//g'`.split("\n")
 
-    if total_file_lines.to_i != 0 && user_commits.to_i != 0
-      puts "#{file}"
-      contribution_percentage = user_commits.to_i / total_file_lines.to_i * 100
-      puts "#{contribution_percentage}%"
-    end
-  }
+  # calculating their contrinbution percentage on each file
+  ex1 = "#{controller_dir}/Pods/**/*"
+  ex2 = "#{controller_dir}/Dependencies/**/*"
+  ex3 = "#{controller_dir}/UnitTests/**/*"
+  ex4 = "*.framework$"
   
+  FileList["#{controller_dir}/**/*.m", "#{controller_dir}/**/*.h"].exclude(ex1, ex2, ex3, ex4).each do |path|
+    # puts path
+    print ".".green
+    
+    total_file_lines = `wc -l \"#{path}\" | awk '{print $1}'`.chomp.to_f
+    
+    committers.each do |commiter|
+      user_commits = `git blame \"#{path}\" | grep -cow \"#{commiter}\"`.chomp.to_f
+      contribution_percentage = (user_commits / total_file_lines * 100).round(2)
+      # print "#{user_commits} / #{total_file_lines}    "
+      # puts "#{commiter}: #{contribution_percentage}% #{path}" if contribution_percentage != 0
+      
+      # modifying the html file
+      if contribution_percentage != 0
+        begin
+          file = File.open(report_path, "a")
+          file.write("<tr><td>#{commiter}</td><td>#{contribution_percentage}%</td><td>#{path}</td></tr>") 
+        rescue IOError => e
+          #some error occur, dir not writable etc.
+        ensure
+          file.close unless file == nil
+        end
+      end
+    end
+  end
+
+  # closing the html file
+  begin
+    file = File.open(report_path, "a")
+    file.write("</table></body></html>") 
+  rescue IOError => e
+    #some error occur, dir not writable etc.
+  ensure
+    file.close unless file == nil
+  end
+
+  puts "--end".yellow
 end
