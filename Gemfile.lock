@@ -2,9 +2,11 @@ GEM
   remote: https://rubygems.org/
   specs:
     colorize (0.7.2)
+    work_queue (2.5.3)
 
 PLATFORMS
   ruby
 
 DEPENDENCIES
   colorize
+  work_queue
