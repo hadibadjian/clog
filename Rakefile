@@ -1,6 +1,7 @@
 require 'find'
 require 'fileutils'
 require 'colorize'
+require 'thread'
 
 desc "Some task"
 task :clog, [:workspace] do |t, args|
@@ -11,6 +12,9 @@ task :clog, [:workspace] do |t, args|
   report_path = "#{controller_dir}/index.html"
   
   print "start--".yellow
+
+  # creating a new mutex for threading
+  mutex = Mutex.new
 
   # creaing an html file
   begin
@@ -33,29 +37,40 @@ task :clog, [:workspace] do |t, args|
   
   FileList["#{controller_dir}/**/*.m", "#{controller_dir}/**/*.h"].exclude(ex1, ex2, ex3, ex4).each do |path|
     # puts path
-    print ".".green
     
-    total_file_lines = `wc -l \"#{path}\" | awk '{print $1}'`.chomp.to_f
     
-    committers.each do |commiter|
-      user_commits = `git blame \"#{path}\" | grep -cow \"#{commiter}\"`.chomp.to_f
-      contribution_percentage = (user_commits / total_file_lines * 100).round(2)
-      # print "#{user_commits} / #{total_file_lines}    "
-      # puts "#{commiter}: #{contribution_percentage}% #{path}" if contribution_percentage != 0
-      
-      # modifying the html file
-      if contribution_percentage != 0
-        begin
-          file = File.open(report_path, "a")
-          file.write("<tr><td>#{commiter}</td><td>#{contribution_percentage}%</td><td>#{path}</td></tr>") 
-        rescue IOError => e
-          #some error occur, dir not writable etc.
-        ensure
-          file.close unless file == nil
+    Thread.new do 
+      mutex.synchronize do
+        print ".".green
+        
+        total_file_lines = `wc -l \"#{path}\" | awk '{print $1}'`.chomp.to_f
+        
+        committers.each do |commiter|
+          user_commits = `git blame \"#{path}\" | grep -cow \"#{commiter}\"`.chomp.to_f
+          contribution_percentage = (user_commits / total_file_lines * 100).round(2)
+          # print "#{user_commits} / #{total_file_lines}    "
+          # puts "#{commiter}: #{contribution_percentage}% #{path}" if contribution_percentage != 0
+          
+          # modifying the html file
+          if contribution_percentage != 0
+            begin
+                file = File.open(report_path, "a")
+                file.write("<tr><td>#{commiter}</td><td>#{contribution_percentage}%</td><td>#{path}</td></tr>") 
+            rescue IOError => e
+              #some error occur, dir not writable etc.
+            ensure
+              file.close unless file == nil
+            end
+          end
         end
       end
     end
   end
+
+  # waiting for the threads to finish
+  mutex.lock
+
+  puts "hello there"
 
   # closing the html file
   begin
