@@ -11,6 +11,7 @@ task :clog, [:workspace] do |t, args|
 
   report_path = "#{controller_dir}/index.html"
   
+  puts Time.now
   print "start--".yellow
 
   # creating a new mutex for threading
@@ -35,24 +36,23 @@ task :clog, [:workspace] do |t, args|
   ex3 = "#{controller_dir}/UnitTests/**/*"
   ex4 = "*.framework$"
   
-  FileList["#{controller_dir}/**/*.m", "#{controller_dir}/**/*.h"].exclude(ex1, ex2, ex3, ex4).each do |path|
-    # puts path
-    
+  FileList["#{controller_dir}/**/*"].exclude(ex1, ex2, ex3, ex4).each do |path|
     
     Thread.new do 
+
       mutex.synchronize do
         print ".".green
         
         total_file_lines = `wc -l \"#{path}\" | awk '{print $1}'`.chomp.to_f
         
         committers.each do |commiter|
+      
           user_commits = `git blame \"#{path}\" | grep -cow \"#{commiter}\"`.chomp.to_f
           contribution_percentage = (user_commits / total_file_lines * 100).round(2)
-          # print "#{user_commits} / #{total_file_lines}    "
-          # puts "#{commiter}: #{contribution_percentage}% #{path}" if contribution_percentage != 0
           
           # modifying the html file
           if contribution_percentage != 0
+      
             begin
                 file = File.open(report_path, "a")
                 file.write("<tr><td>#{commiter}</td><td>#{contribution_percentage}%</td><td>#{path}</td></tr>") 
@@ -61,6 +61,7 @@ task :clog, [:workspace] do |t, args|
             ensure
               file.close unless file == nil
             end
+      
           end
         end
       end
@@ -69,8 +70,6 @@ task :clog, [:workspace] do |t, args|
 
   # waiting for the threads to finish
   mutex.lock
-
-  puts "hello there"
 
   # closing the html file
   begin
@@ -83,4 +82,5 @@ task :clog, [:workspace] do |t, args|
   end
 
   puts "--end".yellow
+  puts Time.now
 end
