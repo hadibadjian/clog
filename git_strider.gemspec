@@ -14,6 +14,6 @@ Gem::Specification.new do |spec|
 
   spec.post_install_message = "Thanks for installing!"
 
-  spec.add_runtime_dependency 'work_queue'
+  spec.add_runtime_dependency 'parallel'
   spec.add_runtime_dependency 'colorize'
 end

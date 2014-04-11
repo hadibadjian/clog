@@ -81,7 +81,7 @@ class HtmlComposer
       file.write(
         "   </table>
             <div class=\"footer pull-right\">
-              <p>visit <a href=\"https://github.com/hadibadjian/clog\">clog Github</a></p>
+              <p>visit <a href=\"https://github.com/hadibadjian/git_strider\">git-strider Github</a></p>
             </div>
           </body>
         </html>")
