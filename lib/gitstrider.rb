@@ -2,7 +2,7 @@ require 'find'
 require 'fileutils'
 require 'parallel'
 
-require 'html_composer'
+require 'gitstrider/html_composer'
 
 class GitStrider
 

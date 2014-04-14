@@ -5,11 +5,13 @@ class HtmlComposer
 
     # removing the report directory
     dir_name = File.dirname(report_relative_path)
-
-    FileUtils.rm_r dir_name
+    if File.exist?(dir_name)
+      FileUtils.rm_r dir_name
+    end
     FileUtils.mkdir_p "#{root}/#{dir_name}/resources/"
 
-    vendor_resources = "lib/gitstrider/vendor/."
+    gem_path = File.expand_path(File.dirname(__FILE__))
+    vendor_resources = "#{gem_path}/vendor/."
     resources_dir    = "#{root}/#{dir_name}/resources/."
     FileUtils.cp_r vendor_resources, resources_dir, :verbose => true
 
