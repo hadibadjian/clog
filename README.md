@@ -1,4 +1,5 @@
 # GitStrider
+[![Gem Version](https://badge.fury.io/rb/gitstrider.svg)](http://badge.fury.io/rb/gitstrider)
 
 ## Getting Started
 
