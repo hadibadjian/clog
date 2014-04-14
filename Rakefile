@@ -1,18 +1,18 @@
 
 desc "clean up"
 task :clean do
-  sh "gem cleanup git_strider --verbose"
-  sh "gem uninstall git_strider"
+  sh "gem cleanup gitstrider --verbose"
+  sh "gem uninstall gitstrider"
 end
 
-desc "build git_strider gem"
+desc "build gitstrider gem"
 task :build do
-  sh "gem build git_strider.gemspec"
+  sh "gem build gitstrider.gemspec"
 end
 
 desc "install"
 task :install => [:clean]
 task :install => [:build]
-task :install, [:version] do |t, args|
-  sh "gem install git_strider-#{args.version}.gem"
+task :install do |t, args|
+  sh "gem install gitstrider-*.gem"
 end
