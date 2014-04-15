@@ -1,11 +1,7 @@
 # GitStrider
 [![Gem Version](https://badge.fury.io/rb/gitstrider.svg)](http://badge.fury.io/rb/gitstrider)
 
-![sample-report][sample-report]
-
-GitStrider provides a contribution report for a git enabled project. 
-
-This report can be used as a guide to determine a file's owner for code maintenance or reviews.
+GitStrider provides a contribution report for a git enabled project. This report can be used as a guide to determine a file's owner for code maintenance or reviews.
 
 ## Getting Started
 
@@ -48,6 +44,10 @@ end
 ```bash
 $ rake gitstrider
 ```
+
+## Sample Output
+
+![sample-report][sample-report]
 
 ## License
 *[The MIT License (MIT)]*
