@@ -1,6 +1,12 @@
 # GitStrider
 [![Gem Version](https://badge.fury.io/rb/gitstrider.svg)](http://badge.fury.io/rb/gitstrider)
 
+![sample-report][sample-report]
+
+GitStrider provides a contribution report for a git enabled project. 
+
+This report can be used as a guide to determine a file's owner for code maintenance or reviews.
+
 ## Getting Started
 
 1 - Add GitStrider to your `Gemfile` and `bundle install`:
@@ -47,3 +53,4 @@ $ rake gitstrider
 *[The MIT License (MIT)]*
 
 [The MIT License (MIT)]:https://github.com/hadibadjian/gitstrider/blob/master/LICENSE
+[sample-report]:https://github.com/hadibadjian/gitstrider/blob/master/sample/screen_shot.png?raw=true
