@@ -87,7 +87,7 @@ class GitStrider
             
         Parallel.each(@committers, :in_threads => @config[:in_threads]) do |committer|
           committer.strip!
-          user_commits = `git blame \"#{path}\" | grep -cow \"#{committer}\"`.chomp.to_f
+          user_commits = `git blame master \"#{path}\" | grep -cow \"#{committer}\"`.chomp.to_f
           
           users_data[committer] = { :commits => user_commits,
                                     :file_lines => total_file_lines }

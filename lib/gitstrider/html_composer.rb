@@ -13,7 +13,7 @@ class HtmlComposer
     gem_path = File.expand_path(File.dirname(__FILE__))
     vendor_resources = "#{gem_path}/vendor/."
     resources_dir    = "#{root}/#{dir_name}/resources/."
-    FileUtils.cp_r vendor_resources, resources_dir, :verbose => true
+    FileUtils.cp_r vendor_resources, resources_dir
 
     @report_relative_path = "#{root}/#{report_relative_path}"
   end
